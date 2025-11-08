@@ -31,6 +31,12 @@ PROBLEMAS IDENTIFICADOS EN NETLIFY
    - Archivo: app/(public)/trabaja-con-nosotros/page.tsx
    - También agregado: export const dynamic = 'force-dynamic'
 
+4. ERROR: "Page not found" (404) después del deploy
+   - Problema: Configuración incorrecta en netlify.toml
+   - Solución: Removido "publish = .next" y redirects manuales
+   - Razón: El plugin @netlify/plugin-nextjs maneja todo automáticamente
+   - Archivo: netlify.toml
+
 ================================================================================
 ARCHIVOS MODIFICADOS PARA CORRECCIÓN DE NETLIFY
 ================================================================================
@@ -38,6 +44,8 @@ ARCHIVOS MODIFICADOS PARA CORRECCIÓN DE NETLIFY
 1. netlify.toml
    - Cambio: command = "npx prisma generate && npm run build"
    - Razón: Asegurar que Prisma Client se genere antes del build
+   - IMPORTANTE: Removido "publish = .next" y redirects manuales
+   - Razón: El plugin @netlify/plugin-nextjs maneja esto automáticamente
 
 2. app/api/dashboard/stats/route.ts
    - Agregado: export const dynamic = 'force-dynamic'
@@ -80,9 +88,14 @@ Variables de entorno requeridas en Netlify:
 - NETLIFY: true (para detectar entorno Netlify)
 
 Build command: npx prisma generate && npm run build
-Publish directory: .next
+Publish directory: NO ESPECIFICAR (el plugin lo maneja automáticamente)
 
 Plugin requerido: @netlify/plugin-nextjs
+
+IMPORTANTE: 
+- NO especificar "publish" en netlify.toml cuando se usa @netlify/plugin-nextjs
+- NO agregar redirects manuales, el plugin las maneja automáticamente
+- El plugin de Next.js configura todo automáticamente para Netlify
 
 ================================================================================
 NOTAS IMPORTANTES
