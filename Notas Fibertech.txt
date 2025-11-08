@@ -1,57 +1,155 @@
-{
-  "name": "fibertech",
-  "version": "1.0.0",
-  "private": true,
-      "scripts": {
-      "dev": "next dev",
-      "build": "prisma generate && next build",
-      "start": "next start",
-      "lint": "next lint",
-      "db:generate": "prisma generate",
-      "db:push": "prisma db push",
-      "db:migrate": "prisma migrate dev",
-      "db:studio": "prisma studio",
-      "setup": "node scripts/setup.js",
-      "create-admin": "node scripts/create-admin.js",
-      "postinstall": "prisma generate"
-    }
-  ,
-  "dependencies": {
-    "@hookform/resolvers": "^3.3.4",
-    "@prisma/client": "^5.9.1",
-    "@radix-ui/react-dialog": "^1.0.5",
-    "@radix-ui/react-dropdown-menu": "^2.0.6",
-    "@radix-ui/react-label": "^2.0.2",
-    "@radix-ui/react-select": "^2.0.0",
-    "@radix-ui/react-slot": "^1.0.2",
-    "@radix-ui/react-toast": "^1.1.5",
-    "bcryptjs": "^2.4.3",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.0",
-    "framer-motion": "^10.18.0",
-    "lucide-react": "^0.312.0",
-    "next": "14.1.0",
-    "next-auth": "^4.24.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-hook-form": "^7.49.3",
-    "recharts": "^2.10.4",
-    "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.22.4"
-  },
-  "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^20.11.5",
-    "@types/react": "^18.2.48",
-    "@types/react-dom": "^18.2.18",
-    "autoprefixer": "^10.4.17",
-    "eslint": "^8.56.0",
-    "eslint-config-next": "14.1.0",
-    "postcss": "^8.4.33",
-    "prisma": "^5.9.1",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5.3.3"
-  }
-}
+================================================================================
+BITÁCORA DE CAMBIOS - FIBERTECH
+================================================================================
 
+Fecha: 2025-01-XX
+Objetivo: Corregir errores de build en Netlify para despliegue temporal
+
+================================================================================
+PROBLEMAS IDENTIFICADOS EN NETLIFY
+================================================================================
+
+1. ERROR: Prisma Client no se generaba durante el build
+   - Solución: Agregado "npx prisma generate" en netlify.toml antes del build
+   - Archivo: netlify.toml
+   - Cambio: command = "npx prisma generate && npm run build"
+
+2. ERROR: "Dynamic server usage" - Rutas API intentaban renderizarse estáticamente
+   - Problema: Next.js intentaba pre-renderizar rutas API que usan autenticación
+   - Solución: Agregado "export const dynamic = 'force-dynamic'" en todas las rutas API
+   - Archivos modificados:
+     * app/api/dashboard/stats/route.ts
+     * app/api/dashboard/user-data/route.ts
+     * app/api/admin/users/route.ts
+     * app/api/admin/data/route.ts
+     * app/api/cv/route.ts
+     * app/api/contact/route.ts
+
+3. ERROR: "FileList is not defined" en /trabaja-con-nosotros
+   - Problema: z.instanceof(FileList) no funciona durante SSR/build
+   - Solución: Cambiado a z.any().refine() con validación condicional para SSR
+   - Archivo: app/(public)/trabaja-con-nosotros/page.tsx
+   - También agregado: export const dynamic = 'force-dynamic'
+
+================================================================================
+ARCHIVOS MODIFICADOS PARA CORRECCIÓN DE NETLIFY
+================================================================================
+
+1. netlify.toml
+   - Cambio: command = "npx prisma generate && npm run build"
+   - Razón: Asegurar que Prisma Client se genere antes del build
+
+2. app/api/dashboard/stats/route.ts
+   - Agregado: export const dynamic = 'force-dynamic'
+   - Razón: Evitar pre-renderizado estático de rutas con autenticación
+
+3. app/api/dashboard/user-data/route.ts
+   - Agregado: export const dynamic = 'force-dynamic'
+   - Razón: Evitar pre-renderizado estático de rutas con autenticación
+
+4. app/api/admin/users/route.ts
+   - Agregado: export const dynamic = 'force-dynamic'
+   - Razón: Evitar pre-renderizado estático de rutas con autenticación
+
+5. app/api/admin/data/route.ts
+   - Agregado: export const dynamic = 'force-dynamic'
+   - Razón: Evitar pre-renderizado estático de rutas con autenticación
+
+6. app/api/cv/route.ts
+   - Agregado: export const dynamic = 'force-dynamic'
+   - Razón: Evitar pre-renderizado estático de rutas con autenticación
+   - Nota: También modificado para usar /tmp en Netlify (archivos temporales)
+
+7. app/api/contact/route.ts
+   - Agregado: export const dynamic = 'force-dynamic'
+   - Razón: Evitar pre-renderizado estático de rutas con autenticación
+
+8. app/(public)/trabaja-con-nosotros/page.tsx
+   - Cambio: Validación de FileList a z.any().refine() con validación condicional
+   - Agregado: export const dynamic = 'force-dynamic'
+   - Razón: FileList no existe durante SSR/build, causaba error de referencia
+
+================================================================================
+CONFIGURACIÓN DE NETLIFY
+================================================================================
+
+Variables de entorno requeridas en Netlify:
+- DATABASE_URL: URL de conexión a PostgreSQL
+- NEXTAUTH_URL: URL de la aplicación (ej: https://tu-sitio.netlify.app)
+- NEXTAUTH_SECRET: Clave secreta generada
+- NETLIFY: true (para detectar entorno Netlify)
+
+Build command: npx prisma generate && npm run build
+Publish directory: .next
+
+Plugin requerido: @netlify/plugin-nextjs
+
+================================================================================
+NOTAS IMPORTANTES
+================================================================================
+
+1. ARCHIVOS TEMPORALES:
+   - Los CVs se guardan en /tmp en Netlify (temporal)
+   - Los archivos se perderán en cada deploy/reinicio
+   - La información en la base de datos se mantiene
+   - MIGRACIÓN FUTURA: Implementar AWS S3 para almacenamiento permanente
+
+2. BASE DE DATOS:
+   - Requiere PostgreSQL externo (Supabase, Neon, Railway, etc.)
+   - Las migraciones deben ejecutarse manualmente o en el build
+
+3. PRÓXIMOS PASOS:
+   - Migrar almacenamiento de archivos a AWS S3
+   - Considerar migración a EC2 para mayor control
+   - Implementar sistema de almacenamiento permanente
+
+================================================================================
+ESTADO ACTUAL DE ARCHIVOS FUNCIONALES
+================================================================================
+
+ARCHIVOS DE CONFIGURACIÓN:
+✓ netlify.toml - Configurado para Netlify
+✓ package.json - Scripts de build actualizados
+✓ next.config.js - Configuración de Next.js
+✓ prisma/schema.prisma - Schema de base de datos
+
+RUTAS API (Todas con export const dynamic = 'force-dynamic'):
+✓ app/api/auth/[...nextauth]/route.ts - Autenticación NextAuth
+✓ app/api/cv/route.ts - Subida de CVs (temporal en /tmp)
+✓ app/api/contact/route.ts - Formulario de contacto
+✓ app/api/dashboard/stats/route.ts - Estadísticas admin
+✓ app/api/dashboard/user-data/route.ts - Datos de usuario
+✓ app/api/admin/users/route.ts - Gestión de usuarios
+✓ app/api/admin/data/route.ts - Datos admin
+
+PÁGINAS:
+✓ app/(public)/page.tsx - Página principal
+✓ app/(public)/contacto/page.tsx - Página de contacto
+✓ app/(public)/trabaja-con-nosotros/page.tsx - Formulario CV (corregido)
+✓ app/(auth)/login/page.tsx - Página de login
+✓ app/dashboard/user/page.tsx - Dashboard usuario
+✓ app/dashboard/admin/page.tsx - Dashboard admin
+
+COMPONENTES:
+✓ components/Header.tsx
+✓ components/Footer.tsx
+✓ components/LayoutWrapper.tsx
+✓ components/SessionProvider.tsx
+✓ components/dashboard/Sidebar.tsx
+✓ components/dashboard/AdminSidebar.tsx
+✓ components/ui/* - Componentes ShadCN/UI
+
+LIBRERÍAS:
+✓ lib/auth.ts - Funciones de autenticación (hash/verify password)
+✓ lib/auth-config.ts - Configuración NextAuth
+✓ lib/auth-helpers.ts - Helpers de autenticación
+✓ lib/prisma.ts - Cliente Prisma
+✓ lib/utils.ts - Utilidades
+
+SCRIPTS:
+✓ scripts/setup.js - Script de configuración inicial
+✓ scripts/create-admin.js - Script para crear administrador
+
+================================================================================
+FIN DE BITÁCORA
+================================================================================

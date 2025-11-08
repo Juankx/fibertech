@@ -17,7 +17,13 @@ const cvSchema = z.object({
   email: z.string().email("Email inválido"),
   phone: z.string().min(10, "El teléfono debe tener al menos 10 caracteres"),
   position: z.string().min(3, "El cargo debe tener al menos 3 caracteres"),
-  file: z.instanceof(FileList).refine((files) => files.length > 0, "El CV es requerido"),
+  file: z.any().refine(
+    (files) => {
+      if (typeof window === 'undefined') return true // Durante SSR, siempre válido
+      return files && files.length > 0
+    },
+    "El CV es requerido"
+  ),
 })
 
 type CvFormData = z.infer<typeof cvSchema>
@@ -162,7 +168,9 @@ export default function WorkWithUsPage() {
                     <FileText className="h-5 w-5 text-muted-foreground" />
                   </div>
                   {errors.file && (
-                    <p className="text-sm text-destructive">{errors.file.message}</p>
+                    <p className="text-sm text-destructive">
+                      {typeof errors.file.message === 'string' ? errors.file.message : 'El CV es requerido'}
+                    </p>
                   )}
                   <p className="text-xs text-muted-foreground">
                     Solo archivos PDF. Tamaño máximo: 10MB
@@ -220,4 +228,6 @@ export default function WorkWithUsPage() {
     </div>
   )
 }
+
+export const dynamic = 'force-dynamic'
 
