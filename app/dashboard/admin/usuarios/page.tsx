@@ -39,7 +39,7 @@ const userSchema = z.object({
   name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
   email: z.string().email("Email inválido"),
   password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
-  role: z.enum(["USER", "ADMIN"]),
+  role: z.enum(["USER", "ADMIN", "TECNICO"]),
 })
 
 type UserFormData = z.infer<typeof userSchema>
@@ -211,7 +211,7 @@ export default function UsuariosPage() {
                   <Label htmlFor="role">Rol</Label>
                   <Select
                     value={role}
-                    onValueChange={(value) => setValue("role", value as "USER" | "ADMIN")}
+                    onValueChange={(value) => setValue("role", value as "USER" | "ADMIN" | "TECNICO")}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -219,6 +219,7 @@ export default function UsuariosPage() {
                     <SelectContent>
                       <SelectItem value="USER">Usuario</SelectItem>
                       <SelectItem value="ADMIN">Administrador</SelectItem>
+                      <SelectItem value="TECNICO">Técnico</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -272,10 +273,12 @@ export default function UsuariosPage() {
                         className={`px-2 py-1 rounded text-xs ${
                           user.role === "ADMIN"
                             ? "bg-primary text-white"
+                            : user.role === "TECNICO"
+                            ? "bg-blue-600 text-white"
                             : "bg-muted text-muted-foreground"
                         }`}
                       >
-                        {user.role}
+                        {user.role === "TECNICO" ? "Técnico" : user.role}
                       </span>
                     </TableCell>
                     <TableCell>{user._count.cvs}</TableCell>

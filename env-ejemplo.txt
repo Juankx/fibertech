@@ -1,0 +1,25 @@
+# ============================================
+# ARCHIVO .ENV PARA EC2 - FIBERTECH
+# ============================================
+# Copia este contenido completo a un archivo .env en EC2
+# En EC2 ejecuta: nano .env y pega esto
+
+# Database - ⚠️ AJUSTA ESTO CON TU CONFIGURACIÓN DE BASE DE DATOS
+DATABASE_URL="postgresql://usuario:contraseña@host:5432/fibertech?schema=public"
+
+# NextAuth
+NEXTAUTH_URL="http://3.14.73.208:3000"
+# Cuando tengas dominio funcionando, cambia a:
+# NEXTAUTH_SECRET="GENERA_UNA_CLAVE_SECRETA_DE_AL_MENOS_32_CARACTERES"
+# Puedes generar una con: openssl rand -base64 32
+
+# AWS S3 - ⚠️ REEMPLAZA CON TUS CREDENCIALES REALES
+AWS_REGION="us-east-2"
+AWS_ACCESS_KEY_ID="TU_AWS_ACCESS_KEY_ID"
+AWS_SECRET_ACCESS_KEY="TU_AWS_SECRET_ACCESS_KEY"
+AWS_S3_BUCKET_NAME="cyafibertech"
+AWS_S3_BUCKET_URL="https://cyafibertech.s3.us-east-2.amazonaws.com"
+
+# Environment
+NODE_ENV="production"
+

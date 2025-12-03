@@ -90,8 +90,7 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Matriz Calderón, Pichincha.<br />
-                  Av. Panamericana N2-134 y 9 de Agosto
+                  Punin y 9 Agosto N2-134
                 </p>
               </CardContent>
             </Card>
@@ -118,10 +117,10 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent>
                 <a
-                  href="tel:+593999405004"
+                  href="tel:+593995047684"
                   className="text-sm text-secondary hover:underline"
                 >
-                  +593 99 940 5004
+                  +593 99 504 7684
                 </a>
               </CardContent>
             </Card>

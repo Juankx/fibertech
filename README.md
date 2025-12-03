@@ -161,9 +161,9 @@ Asegúrate de configurar correctamente:
 
 ## 📞 Información de Contacto
 
-- **Dirección**: Matriz Calderón, Pichincha. Av. Panamericana N2-134 y 9 de Agosto
+- **Dirección**: Punin y 9 Agosto N2-134
 - **Email**: fibertechya2025@gmail.com
-- **Teléfono**: +593 99 940 5004
+- **Teléfono**: +593 99 504 7684
 - **Redes**: @cafibertech
 
 ## 📄 Licencia

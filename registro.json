@@ -1,0 +1,57 @@
+{
+  "DomainName": "cyafibertech.com",
+  "DurationInYears": 1,
+  "IdnLangCode": "eng",
+  "AutoRenew": true,
+  "AdminContact": {
+      "FirstName": "Emilio Adolfo",
+      "LastName": "Carvajal Barros",
+      "ContactType": "PERSON",
+      "OrganizationName": "",
+      "AddressLine1": "Calle Junin 9 de agosto",
+      "City": "Quito",
+      "CountryCode": "EC",
+      "ZipCode": "170401",
+      "PhoneNumber": "+593.997778628",
+      "Email": "fibertechcya2025@gmail.com"
+  },
+  "RegistrantContact": {
+      "FirstName": "Emilio Adolfo",
+      "LastName": "Carvajal Barros",
+      "ContactType": "PERSON",
+      "OrganizationName": "",
+      "AddressLine1": "Calle Junin 9 de agosto",
+      "City": "Quito",
+      "CountryCode": "EC",
+      "ZipCode": "170401",
+      "PhoneNumber": "+593.997778628",
+      "Email": "fibertechcya2025@gmail.com"
+  },
+  "TechContact": {
+      "FirstName": "Emilio Adolfo",
+      "LastName": "Carvajal Barros",
+      "ContactType": "PERSON",
+      "OrganizationName": "",
+      "AddressLine1": "Calle Junin 9 de agosto",
+      "City": "Quito",
+      "CountryCode": "EC",
+      "ZipCode": "170401",
+      "PhoneNumber": "+593.997778628",
+      "Email": "fibertechcya2025@gmail.com"
+  },
+  "BillingContact": {
+      "FirstName": "Emilio Adolfo",
+      "LastName": "Carvajal Barros",
+      "ContactType": "PERSON",
+      "OrganizationName": "",
+      "AddressLine1": "Calle Junin 9 de agosto",
+      "City": "Quito",
+      "CountryCode": "EC",
+      "ZipCode": "170401",
+      "PhoneNumber": "+593.997778628",
+      "Email": "fibertechcya2025@gmail.com"
+  },
+  "PrivacyProtectAdminContact": true,
+  "PrivacyProtectRegistrantContact": true,
+  "PrivacyProtectTechContact": true
+}

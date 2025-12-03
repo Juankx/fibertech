@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth-helpers"
+import { uploadFileToS3, isS3Configured } from "@/lib/s3"
 import { writeFile, mkdir } from "fs/promises"
 import { join } from "path"
 import { existsSync } from "fs"
@@ -42,36 +43,50 @@ export async function POST(req: NextRequest) {
     // Obtener usuario actual si está autenticado
     const user = await getCurrentUser()
 
-    // En Netlify usar /tmp, en desarrollo usar uploads
-    const isNetlify = process.env.NETLIFY === "true" || process.env.NETLIFY_DEV === "true"
-    const uploadsDir = isNetlify 
-      ? join("/tmp", "uploads") 
-      : join(process.cwd(), "uploads")
-
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true })
-    }
+    // Convertir archivo a buffer
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
 
     // Generar nombre único para el archivo
     const timestamp = Date.now()
     const sanitizedName = name.replace(/[^a-zA-Z0-9]/g, "_")
     const fileName = `${sanitizedName}_${timestamp}.pdf`
-    const filePath = join(uploadsDir, fileName)
 
-    // Guardar archivo
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    await writeFile(filePath, buffer)
+    let filePath: string
+
+    // Usar S3 si está configurado, sino usar almacenamiento local
+    if (isS3Configured()) {
+      // Subir a S3
+      filePath = await uploadFileToS3(
+        buffer,
+        fileName,
+        "cvs",
+        "application/pdf"
+      )
+    } else {
+      // Fallback a almacenamiento local
+      const isNetlify = process.env.NETLIFY === "true" || process.env.NETLIFY_DEV === "true"
+      const uploadsDir = isNetlify 
+        ? join("/tmp", "uploads") 
+        : join(process.cwd(), "uploads")
+
+      if (!existsSync(uploadsDir)) {
+        await mkdir(uploadsDir, { recursive: true })
+      }
+
+      const localFilePath = join(uploadsDir, fileName)
+      await writeFile(localFilePath, buffer)
+      filePath = isNetlify ? `/tmp/uploads/${fileName}` : `/uploads/${fileName}`
+    }
 
     // Guardar en base de datos
-    // Nota: En Netlify, el filePath será temporal, pero guardamos la referencia
     const cv = await prisma.cv.create({
       data: {
         name,
         email,
         phone,
         position,
-        filePath: isNetlify ? `/tmp/uploads/${fileName}` : `/uploads/${fileName}`,
+        filePath,
         userId: user?.id ? parseInt(user.id) : null,
       },
     })

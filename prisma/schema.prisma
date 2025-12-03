@@ -11,14 +11,24 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  messages  Message[]
-  cvs       Cv[]
+  id                Int            @id @default(autoincrement())
+  name              String
+  email             String         @unique
+  password          String
+  role              Role           @default(USER)
+  createdAt         DateTime       @default(now())
+  messages          Message[]
+  cvs               Cv[]
+  cuadrillasTitular Cuadrilla[]   @relation("Titular")
+  cuadrillasAuxiliar Cuadrilla[]   @relation("Auxiliar")
+  actividades       Actividad[]
+  proyectos         Proyecto[]
+  herramientas      Herramienta[]
+  incidencias       Incidencia[]
+  adelantos         Adelanto[]
+  fotos             Foto[]
+  notificaciones    Notificacion[]
+  adelantosAprobados Adelanto[]    @relation("AprobadoPor")
 }
 
 model Message {
@@ -44,8 +54,140 @@ model Cv {
   user      User?    @relation(fields: [userId], references: [id])
 }
 
+model Cuadrilla {
+  id              Int         @id @default(autoincrement())
+  nombre          String
+  tecnicoTitularId Int
+  tecnicoTitular  User        @relation("Titular", fields: [tecnicoTitularId], references: [id])
+  tecnicoAuxiliarId Int?
+  tecnicoAuxiliar User?       @relation("Auxiliar", fields: [tecnicoAuxiliarId], references: [id])
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  actividades     Actividad[]
+}
+
+model Actividad {
+  id              Int       @id @default(autoincrement())
+  fecha           DateTime
+  numeroOrden     String
+  tipoActividad   String
+  datosCliente    Json
+  novedades       String?
+  tecnicoId       Int
+  tecnico         User      @relation(fields: [tecnicoId], references: [id])
+  cuadrillaId     Int?
+  cuadrilla       Cuadrilla? @relation(fields: [cuadrillaId], references: [id])
+  proyectoId      Int?
+  proyecto        Proyecto? @relation(fields: [proyectoId], references: [id])
+  fotos           Foto[]
+  createdAt       DateTime  @default(now())
+}
+
+model Proyecto {
+  id              Int         @id @default(autoincrement())
+  numeroOrden     String
+  tipoActividad   String
+  datosCliente    Json
+  novedades       String?
+  fecha           DateTime
+  tecnicoId       Int
+  tecnico         User        @relation(fields: [tecnicoId], references: [id])
+  actividades     Actividad[]
+  createdAt       DateTime    @default(now())
+}
+
+model Herramienta {
+  id              Int       @id @default(autoincrement())
+  nombre          String
+  descripcion     String?
+  fotoPath        String?
+  fechaRegistro   DateTime  @default(now())
+  tecnicoId       Int
+  tecnico         User      @relation(fields: [tecnicoId], references: [id])
+  createdAt       DateTime  @default(now())
+}
+
+model Incidencia {
+  id              Int           @id @default(autoincrement())
+  tipo            TipoIncidencia
+  descripcion     String
+  fecha           DateTime
+  fotoPath        String?
+  tecnicoId       Int
+  tecnico         User          @relation(fields: [tecnicoId], references: [id])
+  createdAt       DateTime      @default(now())
+}
+
+model Adelanto {
+  id              Int           @id @default(autoincrement())
+  tipo            TipoAdelanto
+  monto           Float
+  motivo          String
+  estado          EstadoAdelanto @default(PENDIENTE)
+  fechaSolicitud  DateTime      @default(now())
+  fechaAprobacion DateTime?
+  tecnicoId       Int
+  tecnico         User          @relation(fields: [tecnicoId], references: [id])
+  aprobadoPorId   Int?
+  aprobadoPor     User?         @relation("AprobadoPor", fields: [aprobadoPorId], references: [id])
+  notificaciones  Notificacion[]
+  createdAt       DateTime      @default(now())
+}
+
+model Foto {
+  id              Int           @id @default(autoincrement())
+  tipo            TipoFoto
+  ruta            String
+  fecha           DateTime      @default(now())
+  tecnicoId       Int
+  tecnico         User          @relation(fields: [tecnicoId], references: [id])
+  actividadId    Int?
+  actividad       Actividad?    @relation(fields: [actividadId], references: [id])
+  createdAt       DateTime      @default(now())
+}
+
+model Notificacion {
+  id              Int           @id @default(autoincrement())
+  tipo            TipoNotificacion
+  mensaje         String
+  leida           Boolean       @default(false)
+  fecha           DateTime      @default(now())
+  usuarioId       Int
+  usuario         User          @relation(fields: [usuarioId], references: [id])
+  adelantoId      Int?
+  adelanto        Adelanto?     @relation(fields: [adelantoId], references: [id])
+  createdAt       DateTime      @default(now())
+}
+
 enum Role {
   USER
   ADMIN
+  TECNICO
+}
+
+enum TipoIncidencia {
+  PERSONAL
+  VEHICULO
+}
+
+enum TipoAdelanto {
+  COMBUSTIBLE
+  SUELDO
+}
+
+enum EstadoAdelanto {
+  PENDIENTE
+  APROBADO
+  RECHAZADO
+}
+
+enum TipoFoto {
+  UNIFORME
+  VEHICULO
+  HERRAMIENTA
+}
+
+enum TipoNotificacion {
+  ADELANTO_SOLICITADO
 }
 

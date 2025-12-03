@@ -13,8 +13,7 @@ export function Footer() {
               <div className="flex items-start gap-2">
                 <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0 text-secondary" />
                 <p>
-                  Matriz Calderón, Pichincha.<br />
-                  Av. Panamericana N2-134 y 9 de Agosto
+                  Punin y 9 Agosto N2-134
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -29,10 +28,10 @@ export function Footer() {
               <div className="flex items-center gap-2">
                 <Phone className="h-5 w-5 flex-shrink-0 text-secondary" />
                 <a
-                  href="tel:+593999405004"
+                  href="tel:+593995047684"
                   className="hover:text-secondary transition-colors"
                 >
-                  +593 99 940 5004
+                  +593 99 504 7684
                 </a>
               </div>
             </div>

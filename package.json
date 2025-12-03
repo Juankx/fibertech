@@ -13,10 +13,13 @@
       "db:studio": "prisma studio",
       "setup": "node scripts/setup.js",
       "create-admin": "node scripts/create-admin.js",
+      "create-tecnico": "node scripts/create-tecnico.js",
       "postinstall": "prisma generate"
     }
   ,
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.490.0",
+    "@aws-sdk/s3-request-presigner": "^3.490.0",
     "@hookform/resolvers": "^3.3.4",
     "@prisma/client": "^5.9.1",
     "@radix-ui/react-dialog": "^1.0.5",

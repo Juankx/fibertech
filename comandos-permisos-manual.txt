@@ -1,0 +1,19 @@
+EJECUTA ESTOS COMANDOS EN POWERSHELL UNO POR UNO:
+
+1. Remover herencia:
+   icacls "cyafibertechclave.pem" /inheritance:r
+
+2. Remover grupo Usuarios:
+   icacls "cyafibertechclave.pem" /remove "BUILTIN\Usuarios"
+
+3. Dar acceso solo a tu usuario (reemplaza TuUsuario con tu nombre de usuario):
+   icacls "cyafibertechclave.pem" /grant "TuUsuario:R"
+
+   O usa esta variante con variable:
+   icacls "cyafibertechclave.pem" /grant "%USERNAME%:R"
+
+4. Verificar permisos:
+   icacls "cyafibertechclave.pem"
+
+IMPORTANTE: El formato correcto es /grant "Usuario:R" (sin paréntesis)
+
